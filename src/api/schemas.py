@@ -1,0 +1,31 @@
+"""
+This module defines the data schemas, including the request and response models.
+"""
+from pydantic import BaseModel
+class GenerateRequest(BaseModel):
+    """
+    Defines the request schema for user input.
+    Attributes:
+        keyword: the festival or event for this campaign.
+        promotional_price: the special price for this campaign.
+        original_price: the original price of the product.
+        product_category: the category of the product.
+        product_name: the product being promoted in this campaign.
+        promotional_content: the core content or message of the campaign.
+    """
+    keyword: str
+    promotional_price: float
+    original_price: float
+    product_category: str
+    product_name: str
+    promotional_content: str
+
+class GenerateResponse(BaseModel):
+    """
+    Defines the response schema returned by the API.
+    Attributes:
+        task_id: a unique identifier for the generated task.
+        status: represents the current processing stage of the task.
+    """
+    task_id: str
+    status: str
