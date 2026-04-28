@@ -32,7 +32,8 @@
       "promotional_price": 0.0,
       "original_price": 0.0,
       "product_category": "string",
-      "promotional_content": "string"
+      "promotional_content": "string",
+      "product_name": "string"
     }
     ```
 * **Response (JSON)**:
