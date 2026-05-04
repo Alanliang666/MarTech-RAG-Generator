@@ -9,6 +9,7 @@ services:
 
   api:
     build: .
+    env_file: .env
 
     ports:
       - "8000:8000"
@@ -19,7 +20,7 @@ services:
   worker:
     build: .
 
-    command: celery -A src.worker.main worker --loglevel=info
+    command: celery -A src.worker worker --loglevel=info
 
     depends_on:
       - redis

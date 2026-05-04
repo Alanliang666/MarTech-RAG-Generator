@@ -38,4 +38,7 @@ async def get_task_status(task_id: str):
     task_result = AsyncResult(task_id)
     return GenerateResponse(
         task_id = task_id,
-        status = task_result.state)
+        status = task_result.state,
+        result = task_result.result if task_result.ready() else None
+        )
+

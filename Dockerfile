@@ -10,7 +10,7 @@ RUN pip install poetry-plugin-export && \
 FROM python:3.13-slim AS runner
 WORKDIR /app
 COPY --from=builder /app/requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ ./src
 
 # === Command ===
