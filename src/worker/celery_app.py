@@ -22,11 +22,17 @@ celery_app.conf.update(
 )
 
 @celery_app.task(name="generate_ad_copy")
-def generate_ad_copy_task(keyword: str, promotional_price: float, 
-original_price: float, product_category: str, promotional_content: str):
+def generate_ad_copy_task(keyword: str, promotional_price: float,
+    original_price: float, product_category: str, promotional_content: str, product_name: str):
     """
-    Returns dictionary of mock and copies.
-    Simulates a 5-sencond delay to mimic the LLM generation process.
+    Returns dictionary of mock ad copies.
+    Simulates a 5-second delay to mimic the LLM generation process.
+    @param keyword: the festival or event for this campaign.
+    @param promotional_price: the special price for this campaign.
+    @param original_price: the original price of the product.
+    @param product_category: the category of the product.
+    @param promotional_content: the core content or message of the campaign.
+    @param product_name: the product being promoted in this campaign.
     """
     time.sleep(5)
     return {
