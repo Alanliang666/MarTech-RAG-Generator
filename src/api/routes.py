@@ -41,4 +41,3 @@ async def get_task_status(task_id: str):
         status = task_result.state,
         result = task_result.result if task_result.ready() else None
         )
-
