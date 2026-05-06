@@ -5,9 +5,8 @@ It configures the AI embedding model to vectorize the text and store it in the v
 import csv
 import chromadb
 from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.core import Document, StorageContext, VectorStoreIndex
+from llama_index.core import Document, StorageContext, VectorStoreIndex, Settings
 from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.core import Settings
 from llama_index.core.embeddings import MockEmbedding
 from src.core import get_settings
 
