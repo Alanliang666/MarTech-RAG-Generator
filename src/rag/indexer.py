@@ -14,7 +14,7 @@ from src.core import get_settings
 settings_config = get_settings()
 
 # Initialize ChromaDB client and collection
-client = chromadb.EphemeralClient()
+client = chromadb.PersistentClient(path=settings_config.chromadb)
 ad_copies = client.get_or_create_collection('ad_copies')
 
 # Read CSV and create documents
