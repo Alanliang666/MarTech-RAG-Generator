@@ -16,14 +16,7 @@ async def create_ad_copy(request: GenerateRequest):
     @param request: the request payload containing ad copy parameters.
     @return: a unique task ID and the initial processing status.
     """
-    task = generate_ad_copy_task.delay(
-        keyword=request.keyword,
-        promotional_price=request.promotional_price,
-        original_price=request.original_price,
-        product_category=request.product_category,
-        promotional_content=request.promotional_content,
-        product_name=request.product_name
-    )
+    task = generate_ad_copy_task.delay(request_data_dict=request.model_dump())
 
     return GenerateResponse(
         task_id = task.id,
