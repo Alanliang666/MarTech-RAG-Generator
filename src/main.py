@@ -2,7 +2,7 @@
 Main entry point for running the application.
 """
 from fastapi import FastAPI
-from src.api import router
+from src.api.routes import router
 
 app = FastAPI(title='MarTech RAG Generator')
 
