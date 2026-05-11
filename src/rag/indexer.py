@@ -10,36 +10,49 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core.embeddings import MockEmbedding
 from src.core import get_settings
 
-# Load environment variables
-settings_config = get_settings()
 
-# Initialize ChromaDB client and collection
-client = chromadb.PersistentClient(path=settings_config.chromadb)
-ad_copies = client.get_or_create_collection('ad_copies')
+def build_index():
+    """
+    Builds the vector index for the retrieval engine and 
+    initializes the ChromaDB collection.
+    """
+    # Load environment variables
+    settings_config = get_settings()
 
-# Read CSV and create documents
-documents = []
-with open("data/mock_ad_data.csv", 'r', encoding="utf-8-sig") as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        documents.append(Document(text=row['ad_copy'],
-            metadata={
-                "product_category": row['product_category'], 
-                "ctr": float(row['ctr']), 
-                "cvr": float(row['cvr']), 
-                "roas": float(row['roas']), 
-                "keyword":row['keyword']
-            }
-        ))
+    # Initialize ChromaDB client and collection
+    client = chromadb.PersistentClient(path=settings_config.chromadb)
+    ad_copies = client.get_or_create_collection('ad_copies')
 
-# Configure embedding model
-# Settings.embed_model = OpenAIEmbedding(
-#     model= "text-embedding-3-small",
-#     api_key=settings_config.openai_api_key.get_secret_value()
-# )
-Settings.embed_model = MockEmbedding(embed_dim=1536) # Use mock model
+    print("Loading previous data...")
+    # Read CSV and create documents
+    documents = []
+    with open("data/mock_ad_data.csv", 'r', encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            documents.append(Document(text=row['ad_copy'],
+                metadata={
+                    "product_category": row['product_category'], 
+                    "ctr": float(row['ctr']), 
+                    "cvr": float(row['cvr']), 
+                    "roas": float(row['roas']), 
+                    "keyword":row['keyword']
+                }
+            ))
 
-# Set up storage context and build index
-vector_store = ChromaVectorStore(chroma_collection=ad_copies)
-storage_context = StorageContext.from_defaults(vector_store=vector_store)
-index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+    # Configure embedding model
+    # Settings.embed_model = OpenAIEmbedding(
+    #     model= "text-embedding-3-small",
+    #     api_key=settings_config.openai_api_key.get_secret_value()
+    # )
+    Settings.embed_model = MockEmbedding(embed_dim=1536) # Use mock model
+
+    print("Building vector index (this might take a while)...")
+    # Set up storage context and build index
+    vector_store = ChromaVectorStore(chroma_collection=ad_copies)
+    storage_context = StorageContext.from_defaults(vector_store=vector_store)
+    index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+
+    print(f'Successfully indexed {len(documents)} ad copies into ChromaDB!')
+
+if __name__ == "__main__":
+    build_index()
