@@ -4,7 +4,7 @@ Currently, Redis is chosen as the backend for a quick setup.
 In future versions, this will be migrated to PostgreSQL.
 """
 from src.rag import rag_engine
-from src.api import GenerateRequest
+from src.api.schemas import GenerateRequest
 from src.core import get_settings
 from celery import Celery
 import time

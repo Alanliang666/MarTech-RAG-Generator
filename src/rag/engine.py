@@ -7,6 +7,7 @@ import chromadb
 from llama_index.core import StorageContext, VectorStoreIndex, Settings, PromptTemplate
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.core.llms.mock import MockLLM
+from llama_index.core.embeddings import MockEmbedding
 from src.core import get_settings
 
 class Engine:
@@ -17,6 +18,7 @@ class Engine:
         """
         # Set up the LLM
         Settings.llm = MockLLM(max_tokens=256)
+        Settings.embed_model = MockEmbedding(embed_dim=1536)
 
         # Retrieve the ChromaDB collection for ad copies.
         self.data_base = settings.chromadb
