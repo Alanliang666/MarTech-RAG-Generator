@@ -24,7 +24,7 @@ def test_generate_ad_copy_task_success(mock_task):
 
     engine = mock_task()
 
-    response = engine.generate.return_value = 'This is fake copy!'
+    engine.generate.return_value = 'This is fake copy!'
 
     output = generate_ad_copy_task(data)
 
@@ -35,7 +35,7 @@ def test_generate_ad_copy_task_invalid_data():
     """
     Ensures that an invalid data payload raises a Pydantic ValidationError.
     """
-    data = {'keyword': 100,
+    data = {'keyword': ['invalid', 'type'],
             'promotional_price': 0, 
             'original_price': 0, 
             'product_category': 'fake', 

@@ -25,7 +25,7 @@ def test_engine_success(mock_from_vector, mock_persistent_client):
             "promotional_content": "寵愛媽咪，滿千送百"
             }
     request_data = GenerateRequest(**data)
-    response = engine.generate(request_data)
+    engine.generate(request_data)
 
     mock_index = mock_from_vector.return_value
     mock_query = mock_index.as_query_engine.return_value

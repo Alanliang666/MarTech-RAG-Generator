@@ -28,7 +28,7 @@ def test_generate_missing_data():
     Ensures that a request missing required fields is rejected with a 422 status.
     """
     incomplete_data = {'keyword': '母親節蛋糕'}
-    response = client.post('api/v1/generate-copy', json=incomplete_data)
+    response = client.post('/api/v1/generate-copy', json=incomplete_data)
     assert response.status_code == 422
 
 def test_generate_invalid_data():
@@ -43,11 +43,11 @@ def test_generate_invalid_data():
     "product_name": "青春露",
     "promotional_content": "寵愛媽咪，滿千送百"
     }
-    response = client.post('api/v1/generate-copy', json=invalid_data)
+    response = client.post('/api/v1/generate-copy', json=invalid_data)
     assert response.status_code == 422
 
 @patch("src.api.routes.generate_ad_copy_task.delay")
-def test_post_completed_task(mock_delay):
+def test_post_generate_copy_success(mock_delay):
     """
     Verifies that a valid POST request successfully dispatches a Celery task and returns a task_id.
     """
@@ -62,7 +62,7 @@ def test_post_completed_task(mock_delay):
         "product_name": "紅絲絨蛋糕"
     }
 
-    response = client.post('api/v1/generate-copy', json=valid_data)
+    response = client.post('/api/v1/generate-copy', json=valid_data)
     assert response.status_code == 200
     assert response.json()['task_id'] == 'fake-123'
     assert response.json()['status'] == 'processing'
