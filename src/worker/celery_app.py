@@ -3,11 +3,10 @@ Instantiates the Celery app and configures the broker and backend.
 Currently, Redis is chosen as the backend for a quick setup.
 In future versions, this will be migrated to PostgreSQL.
 """
+from celery import Celery
 from src.rag import rag_engine
 from src.api.schemas import GenerateRequest
 from src.core import get_settings
-from celery import Celery
-import time
 
 settings = get_settings()
 

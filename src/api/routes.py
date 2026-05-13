@@ -4,8 +4,7 @@ including endpoints for generating ad copy and retrieving task statuses.
 """
 from fastapi import APIRouter
 from src.api.schemas import GenerateRequest, GenerateResponse
-from src.worker.celery_app import generate_ad_copy_task
-from celery.result import AsyncResult
+from src.worker.celery_app import celery_app, generate_ad_copy_task
 
 router = APIRouter()
 
@@ -28,9 +27,15 @@ async def get_task_status(task_id: str):
     Retrieves the current status of a specific task using its task ID.
     @return: task ID of processing status.
     """
-    task_result = AsyncResult(task_id)
+    task_result = celery_app.AsyncResult(task_id)
+    if task_result.state == 'SUCCESS':
+        result = task_result.result
+    elif task_result.state == 'FAILURE':
+        result = {"error": str(task_result.result)}
+    else:
+        result = None
     return GenerateResponse(
         task_id = task_id,
         status = task_result.state,
-        result = task_result.result if task_result.ready() else None
+        result = result
         )
