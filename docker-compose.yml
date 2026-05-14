@@ -15,7 +15,10 @@ services:
       - "8000:8000"
 
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   worker:
     build: .
@@ -24,4 +27,30 @@ services:
     command: celery -A src.worker worker --loglevel=info
 
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+
+    ports:
+      - '5432:5432'
+
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: always
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
