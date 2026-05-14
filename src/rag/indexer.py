@@ -6,8 +6,7 @@ import csv
 import chromadb
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.core import Document, StorageContext, VectorStoreIndex, Settings
-from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.core.embeddings import MockEmbedding
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from src.core import get_settings
 
 
@@ -40,11 +39,10 @@ def build_index():
             ))
 
     # Configure embedding model
-    # Settings.embed_model = OpenAIEmbedding(
-    #     model= "text-embedding-3-small",
-    #     api_key=settings_config.openai_api_key.get_secret_value()
-    # )
-    Settings.embed_model = MockEmbedding(embed_dim=1536) # Use mock model
+    Settings.embed_model = GoogleGenAIEmbedding(
+        model_name='models/gemini-embedding-001',
+        api_key=settings_config.your_ai_api_key.get_secret_value()
+    )
 
     print("Building vector index (this might take a while)...")
     # Set up storage context and build index

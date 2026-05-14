@@ -3,23 +3,35 @@ This module implements the RAG engine, initializes the ChromaDB client.
 And generates the prompt template while limiting retrieval to the top 3 results.
 """
 from functools import lru_cache
+
 import chromadb
-from llama_index.core import StorageContext, VectorStoreIndex, Settings, PromptTemplate
+from llama_index.core import Settings, PromptTemplate, StorageContext, VectorStoreIndex
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from llama_index.llms.google_genai import GoogleGenAI
 from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.core.llms.mock import MockLLM
-from llama_index.core.embeddings import MockEmbedding
+
 from src.core import get_settings
 
 class Engine:
+    """
+    Configures the LLM and embedding model, and connects to the ChromaDB vector store.
+    """
     def __init__(self, settings):
         """
         Initializes the ChromaDB client and sets up the vector database.
         @param settings: Settings, the application settings containing configuration variables.
         """
         # Set up the LLM
-        Settings.llm = MockLLM(max_tokens=256)
-        Settings.embed_model = MockEmbedding(embed_dim=1536)
+        Settings.llm = GoogleGenAI(
+            max_tokens=2048,
+            model='models/gemini-2.5-flash',
+            api_key=settings.your_ai_api_key.get_secret_value()
+            )
 
+        Settings.embed_model = GoogleGenAIEmbedding(
+            model_name='models/gemini-embedding-001',
+            api_key=settings.your_ai_api_key.get_secret_value()
+            )
         # Retrieve the ChromaDB collection for ad copies.
         self.data_base = settings.chromadb
         client = chromadb.PersistentClient(path = self.data_base)

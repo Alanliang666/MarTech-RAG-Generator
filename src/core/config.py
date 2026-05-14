@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     Defines the application settings schema and loads values from the .env file.
     """
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
-    openai_api_key: SecretStr
+    your_ai_api_key: SecretStr
     redis_url: RedisDsn
     chromadb: str
     database_url: AnyUrl
