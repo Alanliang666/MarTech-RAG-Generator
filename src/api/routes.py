@@ -2,6 +2,7 @@
 This module defines the API routes, 
 including endpoints for generating ad copy and retrieving task statuses.
 """
+import uuid
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 from src.api.schemas import GenerateRequest, GenerateResponse
@@ -13,6 +14,7 @@ from src.core.models import Task
 
 router = APIRouter()
 
+
 @router.post('/generate-copy', response_model=GenerateResponse)
 async def create_ad_copy(request: GenerateRequest):
     """
@@ -20,19 +22,24 @@ async def create_ad_copy(request: GenerateRequest):
     @param request: the request payload containing ad copy parameters.
     @return: a unique task ID and the initial processing status.
     """
-    task = generate_ad_copy_task.delay(request_data_dict=request.model_dump())
+    task_id = uuid.uuid4()
 
     async with AsyncSessionLocal() as session:
         new_task = Task(
-            id=task.id,
+            id=str(task_id),
             status='processing',
             keyword=request.keyword
         )
         session.add(new_task)
         await session.commit()
 
+    generate_ad_copy_task.apply_async(
+        kwargs={"request_data_dict": request.model_dump()},
+        task_id=str(task_id)
+    )
+
     return GenerateResponse(
-        task_id = task.id,
+        task_id = str(task_id),
         status = 'processing'
     )
 
