@@ -23,7 +23,7 @@ class Engine:
         """
         # Set up the LLM
         Settings.llm = GoogleGenAI(
-            max_tokens=2048,
+            max_tokens=8192,
             model='models/gemini-2.5-flash',
             api_key=settings.your_ai_api_key.get_secret_value()
             )
