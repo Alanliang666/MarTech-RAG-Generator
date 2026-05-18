@@ -1,0 +1,55 @@
+name: Deploy to GCP Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker asia-east1-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        env:
+          IMAGE_NAME: asia-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/martech-repo/martech-app:${{ github.sha }}
+        run: |
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      - name: Deploy API to Cloud Run
+        run: |
+          gcloud run deploy martech-api \
+            --image asia-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/martech-repo/martech-app:${{ github.sha }} \
+            --region asia-east1 \
+            --allow-unauthenticated \
+            --update-secrets=/app/.env=MARTECH_ENV:latest
+
+      - name: Deploy Celery Worker to Cloud Run
+        run: |
+          gcloud run deploy martech-worker \
+            --image asia-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/martech-repo/martech-app:${{ github.sha }} \
+            --region asia-east1 \
+            --no-allow-unauthenticated \
+            --command="celery" \
+            --args="-A,src.worker,worker,--loglevel=info" \
+            --update-secrets=/app/.env=MARTECH_ENV:latest
