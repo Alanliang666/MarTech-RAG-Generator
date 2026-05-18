@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """
     Defines the application settings schema and loads values from the .env file.
     """
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    model_config = SettingsConfigDict(env_file=('.env', '/secrets/.env'), env_file_encoding='utf-8')
     your_ai_api_key: SecretStr
     redis_url: RedisDsn
     chromadb: str
