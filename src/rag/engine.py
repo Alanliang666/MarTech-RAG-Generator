@@ -5,7 +5,7 @@ And generates the prompt template while limiting retrieval to the top 3 results.
 from functools import lru_cache
 
 import chromadb
-from llama_index.core import Settings, PromptTemplate, StorageContext, VectorStoreIndex
+from llama_index.core import PromptTemplate, StorageContext, VectorStoreIndex
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.llms.google_genai import GoogleGenAI
 from llama_index.vector_stores.chroma import ChromaVectorStore
@@ -38,20 +38,20 @@ class Engine:
         """
 
         # Set up the LLM
-        Settings.llm = GoogleGenAI(
+        llm = GoogleGenAI(
             max_tokens=8192,
             model='models/gemini-2.5-flash',
-            api_key=request_data.api_key
+            api_key=request_data.gemini_api_key
             )
 
-        Settings.embed_model = GoogleGenAIEmbedding(
+        embed_model = GoogleGenAIEmbedding(
             model_name='models/gemini-embedding-001',
-            api_key=request_data.api_key
+            api_key=request_data.gemini_api_key
             )
         
         # Configure the storage context and initialize the vector index.
         storage_context = StorageContext.from_defaults(vector_store = self.vector_store)
-        index = VectorStoreIndex.from_vector_store(self.vector_store, storage_context=storage_context)
+        index = VectorStoreIndex.from_vector_store(self.vector_store, storage_context=storage_context, embed_model=embed_model)
 
         prompt_tmpl_str = """
             You are a professional copywriter. Please refer to the previous successful copy below:
@@ -66,7 +66,8 @@ class Engine:
 
         query_engine = index.as_query_engine(
             text_qa_template=PromptTemplate(prompt_tmpl_str),
-            similarity_top_k=3
+            similarity_top_k=3,
+            llm=llm
         )
 
         query_str = f"""

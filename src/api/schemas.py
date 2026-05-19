@@ -20,7 +20,7 @@ class GenerateRequest(BaseModel):
     product_category: str
     product_name: str
     promotional_content: str
-    api_key: str
+    gemini_api_key: str
 
 class GenerateResponse(BaseModel):
     """
