@@ -41,8 +41,9 @@ jobs:
           gcloud run deploy martech-api \
             --image asia-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/martech-repo/martech-app:${{ github.sha }} \
             --region asia-east1 \
+            --port=8000 \
             --allow-unauthenticated \
-            --update-secrets=/app/.env=MARTECH_ENV:latest
+            --set-secrets=/secrets/.env=MARTECH_ENV:latest
 
       - name: Deploy Celery Worker to Cloud Run
         run: |
@@ -50,6 +51,6 @@ jobs:
             --image asia-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/martech-repo/martech-app:${{ github.sha }} \
             --region asia-east1 \
             --no-allow-unauthenticated \
-            --command="celery" \
-            --args="-A,src.worker,worker,--loglevel=info" \
-            --update-secrets=/app/.env=MARTECH_ENV:latest
+            --command="bash" \
+            --args="-c","celery -A src.worker worker --loglevel=info & python3 -m http.server 8080" \
+            --set-secrets=/secrets/.env=MARTECH_ENV:latest
