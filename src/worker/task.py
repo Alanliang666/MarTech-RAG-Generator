@@ -14,18 +14,22 @@ async def save_task_to_db(task_id:str, result:dict):
     """
     Asynchronously updates a task record in PostgreSQL with the generated ad copy.
     """
-    async with AsyncSessionLocal() as session:
-        stmt = (
-            update(Task)
-            .where(Task.id == task_id)
-            .values(
-                status='completed',
-                result=result,
-                completed_at=datetime.now(timezone.utc)
+    from src.core.database import engine
+    try:
+        async with AsyncSessionLocal() as session:
+            stmt = (
+                update(Task)
+                .where(Task.id == task_id)
+                .values(
+                    status='completed',
+                    result=result,
+                    completed_at=datetime.now(timezone.utc)
+                )
             )
-        )
-        await session.execute(stmt)
-        await session.commit()
+            await session.execute(stmt)
+            await session.commit()
+    finally:
+        await engine.dispose()
 
 @celery_app.task(name="generate_ad_copy", bind=True)
 def generate_ad_copy_task(self, request_data_dict: dict):

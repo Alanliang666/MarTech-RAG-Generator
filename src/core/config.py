@@ -14,7 +14,6 @@ class Settings(BaseSettings):
     redis_url: RedisDsn
     chromadb: str
     database_url: AnyUrl
-    postgres_password: str
 
 @lru_cache
 def get_settings():
