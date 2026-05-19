@@ -43,8 +43,7 @@ jobs:
             --region asia-east1 \
             --port=8000 \
             --allow-unauthenticated \
-            --clear-secrets \
-            --update-secrets=/secrets/.env=MARTECH_ENV:latest
+            --set-secrets=/secrets/.env=MARTECH_ENV:latest
 
       - name: Deploy Celery Worker to Cloud Run
         run: |
@@ -54,5 +53,4 @@ jobs:
             --no-allow-unauthenticated \
             --command="bash" \
             --args="-c","celery -A src.worker worker --loglevel=info & python3 -m http.server 8080" \
-            --clear-secrets \
-            --update-secrets=/secrets/.env=MARTECH_ENV:latest
+            --set-secrets=/secrets/.env=MARTECH_ENV:latest
