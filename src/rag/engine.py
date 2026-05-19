@@ -21,17 +21,6 @@ class Engine:
         Initializes the ChromaDB client and sets up the vector database.
         @param settings: Settings, the application settings containing configuration variables.
         """
-        # Set up the LLM
-        Settings.llm = GoogleGenAI(
-            max_tokens=8192,
-            model='models/gemini-2.5-flash',
-            api_key=settings.your_ai_api_key.get_secret_value()
-            )
-
-        Settings.embed_model = GoogleGenAIEmbedding(
-            model_name='models/gemini-embedding-001',
-            api_key=settings.your_ai_api_key.get_secret_value()
-            )
         # Retrieve the ChromaDB collection for ad copies.
         self.data_base = settings.chromadb
         client = chromadb.PersistentClient(path = self.data_base)
@@ -39,16 +28,31 @@ class Engine:
         # Get the data from indexer.py make collection 
         ad_copies_collection = client.get_or_create_collection('ad_copies')
 
-        # Configure the storage context and initialize the vector index.
-        vector_store = ChromaVectorStore(chroma_collection = ad_copies_collection)
-        storage_context = StorageContext.from_defaults(vector_store = vector_store)
-        self.index = VectorStoreIndex.from_vector_store(vector_store, storage_context=storage_context)
+        self.vector_store = ChromaVectorStore(chroma_collection = ad_copies_collection)
+        
 
     def generate(self, request_data):
         """
         Generates the prompt and connects to the AI model to create ad copies.
         @param request_data: GenerateRequest, the user input payload based on the GenerateRequest schema.
         """
+
+        # Set up the LLM
+        Settings.llm = GoogleGenAI(
+            max_tokens=8192,
+            model='models/gemini-2.5-flash',
+            api_key=request_data.api_key
+            )
+
+        Settings.embed_model = GoogleGenAIEmbedding(
+            model_name='models/gemini-embedding-001',
+            api_key=request_data.api_key
+            )
+        
+        # Configure the storage context and initialize the vector index.
+        storage_context = StorageContext.from_defaults(vector_store = self.vector_store)
+        index = VectorStoreIndex.from_vector_store(self.vector_store, storage_context=storage_context)
+
         prompt_tmpl_str = """
             You are a professional copywriter. Please refer to the previous successful copy below:
             ---------------------
@@ -60,7 +64,7 @@ class Engine:
             Please output the copy directly:
             """
 
-        query_engine = self.index.as_query_engine(
+        query_engine = index.as_query_engine(
             text_qa_template=PromptTemplate(prompt_tmpl_str),
             similarity_top_k=3
         )
