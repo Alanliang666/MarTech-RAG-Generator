@@ -6,6 +6,11 @@ from src.core import get_settings
 
 settings = get_settings()
 
-engine = create_async_engine(str(settings.database_url), echo=True)
+engine = create_async_engine(
+    str(settings.database_url), 
+    echo=True,
+    pool_pre_ping=True,
+    pool_recycle=300
+)
 
 AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)

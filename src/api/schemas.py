@@ -12,6 +12,7 @@ class GenerateRequest(BaseModel):
         product_category: the category of the product.
         product_name: the product being promoted in this campaign.
         promotional_content: the core content or message of the campaign.
+        gemini_api_key: input your Gemini LLM API key using this service.
     """
     keyword: str
     promotional_price: float
@@ -19,6 +20,7 @@ class GenerateRequest(BaseModel):
     product_category: str
     product_name: str
     promotional_content: str
+    gemini_api_key: str
 
 class GenerateResponse(BaseModel):
     """
