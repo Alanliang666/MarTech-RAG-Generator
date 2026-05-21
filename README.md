@@ -29,24 +29,27 @@ Feed it your past ad data, get perfectly personalized ad copy back in seconds. S
 
 | Feature | Description |
 |---|---|
-|  **Asynchronous Architecture** | Drop your data via FastAPI and get an instant response. Let Celery and Redis handle the heavy lifting in the background so you never have to wait for the server! |
-|  **Personalized RAG Engine** | Feed your historical ad copy into the Vector Database. The AI easily retrieves this context to generate highly personalized and high-converting ad copy. |
-|  **Flexible AI Integration** | Not locked into one option! Choose your preferred AI model to generate the perfect ad copy tailored to your needs. |
-|  **Zero-Friction Setup** | Say goodbye to messy environment configs. With Docker Compose, you can get the entire system up and running with just one command. |
-|  **Robust Data Persistence** | Keep your data safe and sound. We use PostgreSQL to robustly store your system metadata, perfectly paired with ChromaDB for your vector embeddings. |
+| **Asynchronous Architecture** | Drop your data via FastAPI and get an instant response. Let Celery and Redis handle the heavy lifting in the background so you never have to wait for the server! |
+| **Personalized RAG Engine** | Feed your historical ad copy into the Vector Database. The AI easily retrieves this context to generate highly personalized and high-converting ad copy. |
+| **Flexible AI Integration** | Not locked into one option! Choose your preferred AI model to generate the perfect ad copy tailored to your needs. |
+| **Zero-Friction Setup** | Say goodbye to messy environment configs. With Docker Compose, you can get the entire system up and running with just one command. |
+| **Robust Data Persistence** | Keep your data safe and sound. We use PostgreSQL to robustly store your system metadata, perfectly paired with ChromaDB for your vector embeddings. |
 
 ---
 
 ## Tech Stack
-API: FastAPI
-Background Jobs: Celery
-Broker: Redis
-Database: PostgreSQL
-Vector Store: ChromaDB
-RAG Framework: LlamaIndex
-LLM / Embeddings: Google Gemini
-Dependency Management: Poetry
-Containerization: Docker / Docker Compose
+
+| Layer | Technology |
+|---|---|
+| API | FastAPI |
+| Background Jobs | Celery |
+| Broker | Redis |
+| Database | PostgreSQL |
+| Vector Store | ChromaDB |
+| RAG Framework | LlamaIndex |
+| LLM / Embeddings | Google Gemini |
+| Dependency Management | Poetry |
+| Containerization | Docker / Docker Compose |
 
 ---
 
@@ -79,7 +82,7 @@ Containerization: Docker / Docker Compose
              │  RAG Retrieval                      │
              ▼                                     │
 ┌────────────────────────────┐                     │
-│      LlamaIndex            │                     |
+│      LlamaIndex            │                     │
 │  Retrieves relevant        │                     │
 │  historical ad copy from   │                     │
 │  ChromaDB Vector Database  │                     │
@@ -137,7 +140,6 @@ DATABASE_URL=postgresql+asyncpg://postgres:your_password_here@postgres:5432/post
 
 ## 🚀 Getting Started
 
-
 ### 1. Install dependencies
 
 ```bash
@@ -168,7 +170,6 @@ Once everything is up and running, head over to the interactive API documentatio
 
 👉 **http://localhost:8000/docs**
 
-
 <img width="1464" height="802" alt="Image" src="https://github.com/user-attachments/assets/17bc1602-2f6f-45a6-8b02-5f2e5461e0be" />
 
 ---
@@ -176,6 +177,7 @@ Once everything is up and running, head over to the interactive API documentatio
 ## API Endpoints
 
 ### Health Check
+
 ```http
 GET /
 ```
@@ -189,11 +191,13 @@ Example response:
 ```
 
 ### Create Ad Copy Generation Task
+
 ```http
 POST /api/v1/generate-copy
 ```
 
 Request body:
+
 ```json
 {
   "keyword": "mothers_day",
@@ -218,6 +222,7 @@ Example response:
 <img width="1426" height="806" alt="Image" src="https://github.com/user-attachments/assets/0e69ed7b-4553-476b-8d0b-64c6e004c54b" />
 
 ### Get Task Status and Result
+
 ```http
 GET /api/v1/tasks/{task_id}
 ```
@@ -248,7 +253,7 @@ If the task is still running, the status will remain processing.
 
 ---
 
-## Development 
+## Development
 
 ### Run the API locally
 
@@ -256,7 +261,7 @@ If the task is still running, the status will remain processing.
 poetry run uvicorn src.main:app --reload
 ```
 
-Run the Celery worker locally:
+### Run the Celery worker locally
 
 ```bash
 poetry run celery -A src.worker worker --loglevel=info
