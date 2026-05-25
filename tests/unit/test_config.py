@@ -17,13 +17,13 @@ def test_config(monkeypatch):
     fake_redis_url = "redis://localhost:6379/1"
     fake_api_key = "sk-test-12345"
     monkeypatch.setenv('REDIS_URL', fake_redis_url)
-    monkeypatch.setenv('OPENAI_API_KEY', fake_api_key)
+    monkeypatch.setenv('YOUR_AI_API_KEY', fake_api_key)
     monkeypatch.setenv('CHROMADB', './fake_db')
     monkeypatch.setenv('DATABASE_URL', 'sqlite:///fake.db')
 
     settings = Settings()
 
-    assert settings.openai_api_key.get_secret_value() == fake_api_key
+    assert settings.your_ai_api_key.get_secret_value() == fake_api_key
     assert str(settings.redis_url) == fake_redis_url
     assert str(settings.chromadb) == './fake_db'
     assert str(settings.database_url) == 'sqlite:///fake.db'
@@ -35,7 +35,7 @@ def test_config_invalid_url(monkeypatch):
     fake_redis_url = "http://localhost:6379"
     fake_api_key = "sk-test-12345"
     monkeypatch.setenv('REDIS_URL', fake_redis_url)
-    monkeypatch.setenv('OPENAI_API_KEY', fake_api_key)
+    monkeypatch.setenv('YOUR_AI_API_KEY', fake_api_key)
     monkeypatch.setenv('CHROMADB', './fake_db')
     monkeypatch.setenv('DATABASE_URL', 'sqlite:///fake.db')
 
@@ -47,7 +47,7 @@ def test_missing_variables(monkeypatch):
     Ensures that missing required environment variables trigger a ValidationError.
     """
     monkeypatch.delenv('REDIS_URL', raising=False)
-    monkeypatch.delenv('OPENAI_API_KEY', raising=False)
+    monkeypatch.delenv('YOUR_AI_API_KEY', raising=False)
 
     with pytest.raises(ValidationError):
         settings = Settings(_env_file=None)
